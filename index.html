@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <img id="image" src="" />
+    <form>
+        <label for="opacity">Opacity</label>
+        <input type="range" id="opacity" name="opacity" min="0" max="1" value="1" step="0.1">
+        <br>
+
+        <label for="border-radius">Border Radius</label>
+        <input type="range" id="border-radius" name="borderRadius" min="0" max="500" value="90" step="10">
+        <br>
+
+        <label for="border-width">Border Width</label>
+        <input type="range" id="border-width" name="borderWidth" min="0" max="30" value="5" step="10">
+        <br>
+
+        <label for="border-color">Border Color</label>
+        <input type="color" id="border-color" name="borderColor" value="#ffffff">
+        <br>
+
+        <label for="background">Background</label>
+        <input type="color" id="background" name="background" value="#ffffff">
+        <br>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@2.0.0"></script>
+    <script>
+        var appwrite = new Appwrite();
+        appwrite.setEndpoint('https://localhost/v1')
+            .setProject('6079592215d4e')
+        var fileId = "60795941596bd";
+
+        var image = document.getElementById('image');
+        var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, '', 'png');
+        image.src = url;
+        var form = document.querySelector('form');
+        form.addEventListener('change', function (e) {
+            var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, '', 'png');
+            const formData = new FormData(form)
+            for (var pair of formData.entries()) {
+                if (pair[0] == 'borderColor' || pair[0] == 'background') {
+
+                    var entry = pair[0] + '=' + pair[1].substring(1);
+                } else {
+
+                    var entry = pair[0] + '=' + pair[1];
+                }
+                console.log(entry);
+                url += '&' + entry;
+            }
+            image.src = url;
+            console.log(url);
+        });
+    </script>
+</body>
+
+</html>
