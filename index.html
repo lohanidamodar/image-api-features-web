@@ -31,33 +31,28 @@
         <input type="color" id="background" name="background" value="#ffffff">
         <br>
     </form>
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@3.0.5"></script>
     <script>
-        var appwrite = new Appwrite();
+        var appwrite = new Appwrite.Appwrite();
         appwrite.setEndpoint('https://localhost/v1')
             .setProject('6079592215d4e')
         var fileId = "60795941596bd";
 
         var image = document.getElementById('image');
-        var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, '', 'png');
+        /* getFilePreview(fileId: string, width?: number, height?: number, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string) */
+        var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, 0, '', 0, 1, 0, '', 'png');
         image.src = url;
         var form = document.querySelector('form');
         form.addEventListener('change', function (e) {
-            var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, '', 'png');
             const formData = new FormData(form)
-            for (var pair of formData.entries()) {
-                if (pair[0] == 'borderColor' || pair[0] == 'background') {
-
-                    var entry = pair[0] + '=' + pair[1].substring(1);
-                } else {
-
-                    var entry = pair[0] + '=' + pair[1];
-                }
-                console.log(entry);
-                url += '&' + entry;
-            }
+            let borderColor = formData.getAll("borderColor")[0].substring(1);
+            let borderRadius = formData.getAll("borderRadius")[0];
+            let borderWidth = formData.getAll("borderWidth")[0];
+            let background = formData.getAll("background")[0].substring(1);
+            let opacity = formData.getAll("opacity")[0];
+            var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, borderWidth, borderColor,
+                borderRadius, opacity, 0, background, 'png');
             image.src = url;
-            console.log(url);
         });
     </script>
 </body>
