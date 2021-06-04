@@ -42,17 +42,22 @@
         /* getFilePreview(fileId: string, width?: number, height?: number, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string) */
         var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, 0, '', 0, 1, 0, '', 'png');
         image.src = url;
-        var form = document.querySelector('form');
-        form.addEventListener('change', function (e) {
-            const formData = new FormData(form)
-            let borderColor = formData.getAll("borderColor")[0].substring(1);
-            let borderRadius = formData.getAll("borderRadius")[0];
-            let borderWidth = formData.getAll("borderWidth")[0];
-            let background = formData.getAll("background")[0].substring(1);
-            let opacity = formData.getAll("opacity")[0];
-            var url = appwrite.storage.getFilePreview(fileId, 800, 0, 100, borderWidth, borderColor,
-                borderRadius, opacity, 0, background, 'png');
-            image.src = url;
+        form.addEventListener('change', e => {
+            var data = Object.fromEntries(new FormData(form));
+            for (const key in data) {
+                data[key] = data[key].replace('#', '');
+            }
+            image.src = appwrite.storage.getFilePreview(
+                fileId,
+                800,
+                0,
+                100,
+                data.borderWidth,
+                data.borderColor,
+                data.borderRadius,
+                data.opacity,
+                0,
+                data.background);
         });
     </script>
 </body>
